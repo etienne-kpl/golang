@@ -31,6 +31,12 @@ func main() {
 		fmt.Println("How many tickets do you want?")
 		fmt.Scan(&tickets)
 
+		if tickets > remainingTickets {
+			fmt.Printf("Only %v tickets remaining, you can't book %v tickets.\n", remainingTickets, tickets)
+			// next in ruby: skip to the next loop
+			continue
+		}
+
 		remainingTickets -= tickets
 
 		fmt.Printf("Thank you for your booking, %v %v!\n", firstName, lastName)
@@ -48,6 +54,11 @@ func main() {
 		for index, booking := range bookings {
 			var names = strings.Fields(booking)
 			fmt.Printf("%v. %v %v.\n", index+1, names[0], names[1][0:1])
+		}
+
+		if remainingTickets == 0 {
+			fmt.Printf("%v is fully booked, sorry!\n", conferenceName)
+			break
 		}
 	}
 }
