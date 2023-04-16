@@ -3,7 +3,7 @@ package main
 import (
 	"firstapp/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Package level variables here:
@@ -14,7 +14,9 @@ const conferenceName = "Golang lecture"
 const roomCapacity int = 50
 
 var remainingTickets uint = 50
-var bookings []string // Slice cause there is no size in the brackets
+
+// var bookings = make([]map[string]string, 0) // alternate way of writing, 0 being the initial size of the slice
+var bookings []map[string]string // Slice cause there is no size in the brackets
 
 func main() {
 
@@ -66,8 +68,9 @@ func printBookings() {
 	// for _, booking := range bookings {
 	// }
 	for index, booking := range bookings {
-		var names = strings.Fields(booking)
-		fmt.Printf("%v. %v %v.\n", index+1, names[0], names[1][0:1])
+		// var names = strings.Fields(booking)
+		// fmt.Printf("%v. %v %v.\n", index+1, names[0], names[1][0:1])
+		fmt.Printf("%v. %v %v. - %v tickets\n", index+1, booking["firstName"], booking["lastName"][0:1], booking["tickets"])
 	}
 }
 
@@ -97,9 +100,18 @@ func getUserInput() (string, string, string, uint) {
 func bookTicket(tickets uint, firstName string, lastName string, email string) {
 	remainingTickets -= tickets
 
+	// create a map for a user
+	// only one data type in a map!
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	// convert the uint into a string
+	userData["tickets"] = strconv.FormatUint(uint64(tickets), 10)
+
 	fmt.Printf("Thank you for your booking, %v %v!\n", firstName, lastName)
 	fmt.Printf("You booked %v tickets. You will recieve an email at %v\n", tickets, email)
 	fmt.Printf("Only %v tickets left for %v!\n", remainingTickets, conferenceName)
 
-	bookings = append(bookings, firstName+" "+lastName)
+	bookings = append(bookings, userData)
 }
