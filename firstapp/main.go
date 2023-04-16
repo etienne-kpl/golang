@@ -3,6 +3,8 @@ package main
 import (
 	"firstapp/helper"
 	"fmt"
+	"sync"
+	"time"
 )
 
 // Package level variables here:
@@ -26,41 +28,48 @@ type UserData struct {
 	tickets   uint
 }
 
+var wg = sync.WaitGroup{}
+
 func main() {
 
 	greetUsers()
 
 	// for as long as this is "true", run the loop
-	for remainingTickets > 0 && len(bookings) < 50 {
+	// for remainingTickets > 0 && len(bookings) < 50 {
+	// }
 
-		// Store the values returned by the func
-		firstName, lastName, email, tickets := getUserInput()
-		// we call the function in the helper package
-		isValidName, isValidEmail, isValidTickets := helper.ValidateUserInputs(firstName, lastName, email, tickets, remainingTickets)
+	// Store the values returned by the func
+	firstName, lastName, email, tickets := getUserInput()
+	// we call the function in the helper package
+	isValidName, isValidEmail, isValidTickets := helper.ValidateUserInputs(firstName, lastName, email, tickets, remainingTickets)
 
-		if isValidName && isValidEmail && isValidTickets {
-			bookTicket(tickets, firstName, lastName, email)
+	if isValidName && isValidEmail && isValidTickets {
+		bookTicket(tickets, firstName, lastName, email)
 
-			printBookings()
+		wg.Add(1)
+		// Concurrency thanks to the go keyword
+		go sendTicket(tickets, firstName, lastName, email)
 
-			if remainingTickets == 0 {
-				fmt.Printf("%v is fully booked, sorry!\n", conferenceName)
-				break
-			}
-		} else {
-			if !isValidName {
-				fmt.Println("First name or last name you entered is too short.")
-			}
-			if !isValidEmail {
-				fmt.Println("Email address you entered is not valid.")
-			}
-			if !isValidTickets {
-				fmt.Printf("Number of tickets is invalid.")
-			}
-			// // next in ruby: skip to the next loop
-			// continue
+		printBookings()
+
+		if remainingTickets == 0 {
+			fmt.Printf("%v is fully booked, sorry!\n", conferenceName)
+			// break
 		}
+	} else {
+		if !isValidName {
+			fmt.Println("First name or last name you entered is too short.")
+		}
+		if !isValidEmail {
+			fmt.Println("Email address you entered is not valid.")
+		}
+		if !isValidTickets {
+			fmt.Printf("Number of tickets is invalid.")
+		}
+		// // next in ruby: skip to the next loop
+		// continue
 	}
+	wg.Wait()
 }
 
 func greetUsers() {
@@ -134,4 +143,13 @@ func bookTicket(tickets uint, firstName string, lastName string, email string) {
 	fmt.Printf("Only %v tickets left for %v!\n", remainingTickets, conferenceName)
 
 	bookings = append(bookings, userData)
+}
+func sendTicket(tickets uint, firstName string, lastName string, email string) {
+	time.Sleep(10 * time.Second)
+	var ticket = fmt.Sprintf("%v tickets for %v %v", tickets, firstName, lastName)
+	fmt.Println("#######################")
+	fmt.Printf("Sending ticket:\n %v \nto email address %v\n", ticket, email)
+	fmt.Println("#######################")
+
+	wg.Done()
 }
