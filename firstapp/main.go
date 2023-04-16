@@ -5,25 +5,30 @@ import (
 	"strings"
 )
 
-func main() {
-	conferenceName := "Golang lecture"
-	const roomCapacity int = 50
-	var remainingTickets uint = 50
-	var bookings []string // Slice cause there is no size in the brackets
+// Package level variables here:
+// we cannot use this short writing in package level variables
+// conferenceName := "Golang lecture"
+const conferenceName = "Golang lecture"
+const roomCapacity int = 50
 
-	greetUsers(conferenceName, roomCapacity, remainingTickets)
+var remainingTickets uint = 50
+var bookings []string // Slice cause there is no size in the brackets
+
+func main() {
+
+	greetUsers()
 
 	// for as long as this is "true", run the loop
 	for remainingTickets > 0 && len(bookings) < 50 {
 
 		// Store the values returned by the func
-		firstName, lastName, email, tickets := getUserInput(remainingTickets)
-		isValidName, isValidEmail, isValidTickets := validateUserInputs(firstName, lastName, email, tickets, remainingTickets)
+		firstName, lastName, email, tickets := getUserInput()
+		isValidName, isValidEmail, isValidTickets := validateUserInputs(firstName, lastName, email, tickets)
 
 		if isValidName && isValidEmail && isValidTickets {
-			bookTicket(remainingTickets, tickets, firstName, lastName, email, conferenceName, bookings)
+			bookTicket(tickets, firstName, lastName, email)
 
-			printBookings(bookings)
+			printBookings()
 
 			if remainingTickets == 0 {
 				fmt.Printf("%v is fully booked, sorry!\n", conferenceName)
@@ -45,13 +50,12 @@ func main() {
 	}
 }
 
-// we need to give the type of the parameters
-func greetUsers(conferenceName string, roomCapacity int, remainingTickets uint) {
+func greetUsers() {
 	fmt.Printf("Welcome to the %v booking application!\n", conferenceName)
 	fmt.Printf("The room can welcome %v guests and we have %v tickets available.\n", roomCapacity, remainingTickets)
 }
 
-func printBookings(bookings []string) {
+func printBookings() {
 	fmt.Printf("There are %v bookings:\n", len(bookings))
 
 	// range demande toujours 2 paramètres
@@ -64,8 +68,9 @@ func printBookings(bookings []string) {
 	}
 }
 
+// we need to give the type of the parameters
 // This function will return values, so we must specify their types between the () and the {}
-func validateUserInputs(firstName string, lastName string, email string, tickets uint, remainingTickets uint) (bool, bool, bool) {
+func validateUserInputs(firstName string, lastName string, email string, tickets uint) (bool, bool, bool) {
 	// store boolean in variable
 	var isValidName bool = len(firstName) > 2 && len(lastName) > 2
 	isValidEmail := strings.Contains(email, "@")
@@ -74,7 +79,7 @@ func validateUserInputs(firstName string, lastName string, email string, tickets
 	return isValidName, isValidEmail, isValidTickets
 }
 
-func getUserInput(remainingTickets uint) (string, string, string, uint) {
+func getUserInput() (string, string, string, uint) {
 	var firstName string
 	var lastName string
 	var email string
@@ -97,7 +102,7 @@ func getUserInput(remainingTickets uint) (string, string, string, uint) {
 	return firstName, lastName, email, tickets
 }
 
-func bookTicket(remainingTickets uint, tickets uint, firstName string, lastName string, email string, conferenceName string, bookings []string) {
+func bookTicket(tickets uint, firstName string, lastName string, email string) {
 	remainingTickets -= tickets
 
 	fmt.Printf("Thank you for your booking, %v %v!\n", firstName, lastName)
@@ -105,5 +110,4 @@ func bookTicket(remainingTickets uint, tickets uint, firstName string, lastName 
 	fmt.Printf("Only %v tickets left for %v!\n", remainingTickets, conferenceName)
 
 	bookings = append(bookings, firstName+" "+lastName)
-	return bookings
 }
