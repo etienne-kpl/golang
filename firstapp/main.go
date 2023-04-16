@@ -3,7 +3,6 @@ package main
 import (
 	"firstapp/helper"
 	"fmt"
-	"strconv"
 )
 
 // Package level variables here:
@@ -16,7 +15,16 @@ const roomCapacity int = 50
 var remainingTickets uint = 50
 
 // var bookings = make([]map[string]string, 0) // alternate way of writing, 0 being the initial size of the slice
-var bookings []map[string]string // Slice cause there is no size in the brackets
+// var bookings []map[string]string // Slice cause there is no size in the brackets
+var bookings []UserData // Slice cause there is no size in the brackets
+
+// custom data type (object) with Structs
+type UserData struct {
+	firstName string
+	lastName  string
+	email     string
+	tickets   uint
+}
 
 func main() {
 
@@ -70,7 +78,12 @@ func printBookings() {
 	for index, booking := range bookings {
 		// var names = strings.Fields(booking)
 		// fmt.Printf("%v. %v %v.\n", index+1, names[0], names[1][0:1])
-		fmt.Printf("%v. %v %v. - %v tickets\n", index+1, booking["firstName"], booking["lastName"][0:1], booking["tickets"])
+
+		// With slice of map:
+		// fmt.Printf("%v. %v %v. - %v tickets\n", index+1, booking["firstName"], booking["lastName"][0:1], booking["tickets"])
+
+		// with slice of structs:
+		fmt.Printf("%v. %v %v. - %v tickets\n", index+1, booking.firstName, booking.lastName[0:1], booking.tickets)
 	}
 }
 
@@ -100,14 +113,21 @@ func getUserInput() (string, string, string, uint) {
 func bookTicket(tickets uint, firstName string, lastName string, email string) {
 	remainingTickets -= tickets
 
-	// create a map for a user
-	// only one data type in a map!
-	var userData = make(map[string]string)
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	// convert the uint into a string
-	userData["tickets"] = strconv.FormatUint(uint64(tickets), 10)
+	// // create a map for a user
+	// // only one data type in a map!
+	// var userData = make(map[string]string)
+	// userData["firstName"] = firstName
+	// userData["lastName"] = lastName
+	// userData["email"] = email
+	// // convert the uint into a string
+	// userData["tickets"] = strconv.FormatUint(uint64(tickets), 10)
+
+	var userData = UserData{
+		firstName: firstName,
+		lastName:  lastName,
+		email:     email,
+		tickets:   tickets,
+	}
 
 	fmt.Printf("Thank you for your booking, %v %v!\n", firstName, lastName)
 	fmt.Printf("You booked %v tickets. You will recieve an email at %v\n", tickets, email)
