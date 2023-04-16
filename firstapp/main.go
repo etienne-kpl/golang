@@ -7,7 +7,11 @@ import (
 )
 
 func main() {
-	var i = "coucou"
+	var userName string
 	fmt.Println(quote.Go())
-	fmt.Println(i)
+	// ask the user for their name
+	// pointer & to store the variable
+	fmt.Print("Please enter your name:", " ")
+	fmt.Scan(&userName)
+	fmt.Printf("Welcome, %v.\n", userName)
 }
