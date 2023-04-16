@@ -1,6 +1,7 @@
 package main
 
 import (
+	"firstapp/helper"
 	"fmt"
 	"strings"
 )
@@ -8,6 +9,7 @@ import (
 // Package level variables here:
 // we cannot use this short writing in package level variables
 // conferenceName := "Golang lecture"
+// we could capitalize a package level variable to make it acessible outside the package
 const conferenceName = "Golang lecture"
 const roomCapacity int = 50
 
@@ -23,7 +25,8 @@ func main() {
 
 		// Store the values returned by the func
 		firstName, lastName, email, tickets := getUserInput()
-		isValidName, isValidEmail, isValidTickets := validateUserInputs(firstName, lastName, email, tickets)
+		// we call the function in the helper package
+		isValidName, isValidEmail, isValidTickets := helper.ValidateUserInputs(firstName, lastName, email, tickets, remainingTickets)
 
 		if isValidName && isValidEmail && isValidTickets {
 			bookTicket(tickets, firstName, lastName, email)
@@ -66,17 +69,6 @@ func printBookings() {
 		var names = strings.Fields(booking)
 		fmt.Printf("%v. %v %v.\n", index+1, names[0], names[1][0:1])
 	}
-}
-
-// we need to give the type of the parameters
-// This function will return values, so we must specify their types between the () and the {}
-func validateUserInputs(firstName string, lastName string, email string, tickets uint) (bool, bool, bool) {
-	// store boolean in variable
-	var isValidName bool = len(firstName) > 2 && len(lastName) > 2
-	isValidEmail := strings.Contains(email, "@")
-	isValidTickets := tickets > 0 && tickets <= remainingTickets
-	// Possible to return multiple values
-	return isValidName, isValidEmail, isValidTickets
 }
 
 func getUserInput() (string, string, string, uint) {
